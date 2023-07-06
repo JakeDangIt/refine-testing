@@ -1,21 +1,30 @@
-import { GitHubBanner, Refine, WelcomePage } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
 import routerBindings, {
   DocumentTitleHandler,
+  NavigateToResource,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
 import dataProvider from "@refinedev/simple-rest";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HeadlessInferencer } from "@refinedev/inferencer/headless";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
-      <GitHubBanner />
       <RefineKbarProvider>
         <Refine
-          dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+          dataProvider={dataProvider(
+            "https://api.spoonacular.com"
+          )}
+          resources={[
+            {
+              name: "recipes/complexSearch?apiKey=374947ff09cc4971aaf246907e4bfdd6",
+              list: "/recipes",
+            },
+          ]}
           routerProvider={routerBindings}
           options={{
             syncWithLocation: true,
@@ -23,7 +32,10 @@ function App() {
           }}
         >
           <Routes>
-            <Route index element={<WelcomePage />} />
+            <Route index element={<NavigateToResource resource="recipes/complexSearch?apiKey=374947ff09cc4971aaf246907e4bfdd6" />} />
+            <Route path="/recipes">
+              <Route index element={<HeadlessInferencer />} />
+            </Route>
           </Routes>
           <RefineKbar />
           <UnsavedChangesNotifier />
